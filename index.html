@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshift Calendar - December 2025</title>
+    <title>Calendar Ture de Lucru - Decembrie 2025</title>
     <style>
         * {
             margin: 0;
@@ -233,49 +233,49 @@
 <body>
     <div class="container">
         <header>
-            <h1>Workshift Calendar - December 2025</h1>
-            <p>Workshifts × 12h + Leave Days × 8h = 164 Total Hours</p>
+            <h1>Calendar Ture de Lucru - Decembrie 2025</h1>
+            <p>Ture × 12h + Zile Concediu × 8h = 164 Ore Totale</p>
         </header>
         
         <div class="summary">
             <div class="summary-item">
                 <h3>164</h3>
-                <p>Total Hours</p>
+                <p>Ore Totale</p>
             </div>
             <div class="summary-item">
                 <h3>12</h3>
-                <p>Shift Hours</p>
+                <p>Ore Tură</p>
             </div>
             <div class="summary-item">
                 <h3>8</h3>
-                <p>Leave Hours</p>
+                <p>Ore Concediu</p>
             </div>
             <div class="summary-item">
                 <h3>11</h3>
-                <p>Holidays</p>
+                <p>Sărbători</p>
             </div>
         </div>
         
         <div class="legend">
             <div class="legend-item">
                 <div class="color-box holiday"></div>
-                <span>Holiday</span>
+                <span>Sărbătoare</span>
             </div>
             <div class="legend-item">
                 <div class="color-box night-shift"></div>
-                <span>Night Shift</span>
+                <span>Tură Noapte</span>
             </div>
             <div class="legend-item">
                 <div class="color-box day-shift"></div>
-                <span>Day Shift</span>
+                <span>Tură Zi</span>
             </div>
             <div class="legend-item">
                 <div class="color-box leave-day"></div>
-                <span>Leave Day</span>
+                <span>Zi Concediu</span>
             </div>
             <div class="legend-item">
                 <div class="color-box regular-day"></div>
-                <span>Regular Day</span>
+                <span>Zi Normală</span>
             </div>
         </div>
         
@@ -295,7 +295,7 @@
     <script>
         // Data for December 2025
         const monthData = {
-            month: "December",
+            month: "Decembrie",
             year: 2025,
             totalHours: 164,
             shiftHours: 12,
@@ -310,7 +310,7 @@
         // Generate calendar
         function generateCalendar() {
             const calendar = document.getElementById('calendar');
-            const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const dayNames = ['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'];
             
             // Add day headers
             dayNames.forEach(day => {
@@ -343,19 +343,19 @@
                 let hours = 0;
                 
                 if (monthData.holidays.includes(day)) {
-                    status = 'Holiday';
+                    status = 'Sărbătoare';
                     statusClass = 'holiday';
                     hours = 0;
                 } else if (monthData.nightShifts.includes(day)) {
-                    status = 'Night Shift';
+                    status = 'Tură Noapte';
                     statusClass = 'night-shift';
                     hours = monthData.shiftHours;
                 } else if (monthData.dayShifts.includes(day)) {
-                    status = 'Day Shift';
+                    status = 'Tură Zi';
                     statusClass = 'day-shift';
                     hours = monthData.shiftHours;
                 } else {
-                    status = 'Regular Day';
+                    status = 'Zi Normală';
                     statusClass = 'regular-day';
                     hours = 0;
                 }
@@ -385,23 +385,23 @@
             const totalShiftHours = totalShifts * monthData.shiftHours;
             
             analysisContainer.innerHTML = `
-                <h2>Mathematical Analysis</h2>
-                <p><strong>Given:</strong> Total required hours = 164h</p>
-                <p><strong>Equation:</strong> (Number of Shifts × 12h) + (Number of Leave Days × 8h) = 164h</p>
+                <h2>Analiză Matematică</h2>
+                <p><strong>Date:</strong> Ore totale necesare = 164h</p>
+                <p><strong>Ecuație:</strong> (Număr de Ture × 12h) + (Număr de Zile Concediu × 8h) = 164h</p>
                 
-                <h3>Possible Solutions:</h3>
+                <h3>Soluții Posibile:</h3>
                 <ul>
-                    <li><strong>11 shifts + 4 leave days:</strong> 11×12 + 4×8 = 132 + 32 = 164h ✓</li>
-                    <li><strong>12 shifts + 2.5 leave days:</strong> 12×12 + 2.5×8 = 144 + 20 = 164h (but 2.5 leave days not practical)</li>
-                    <li><strong>13 shifts + 1 leave day:</strong> 13×12 + 1×8 = 156 + 8 = 164h ✓</li>
-                    <li><strong>15 shifts - 2 leave days:</strong> 15×12 - 2×8 = 180 - 16 = 164h (taking leave instead of working shifts)</li>
+                    <li><strong>11 ture + 4 zile concediu:</strong> 11×12 + 4×8 = 132 + 32 = 164h ✓</li>
+                    <li><strong>12 ture + 2,5 zile concediu:</strong> 12×12 + 2,5×8 = 144 + 20 = 164h (dar 2,5 zile concediu nu este practic)</li>
+                    <li><strong>13 ture + 1 zi concediu:</strong> 13×12 + 1×8 = 156 + 8 = 164h ✓</li>
+                    <li><strong>15 ture - 2 zile concediu:</strong> 15×12 - 2×8 = 180 - 16 = 164h (luarea concediului în loc să lucrezi ture)</li>
                 </ul>
                 
-                <p><strong>Conclusion:</strong> The only practical whole-number solutions are:</p>
+                <p><strong>Concluzie:</strong> Singurele soluții practice cu numere întregi sunt:</p>
                 <ol>
-                    <li>Work 11 shifts + take 4 leave days</li>
-                    <li>Work 13 shifts + take 1 leave day</li>
-                    <li>Work 15 shifts but convert 2 shifts to leave days</li>
+                    <li>Lucrează 11 ture + ia 4 zile concediu</li>
+                    <li>Lucrează 13 ture + ia 1 zi concediu</li>
+                    <li>Lucrează 15 ture dar convertește 2 ture în zile de concediu</li>
                 </ol>
             `;
         }
@@ -412,38 +412,38 @@
             
             // Solution 1: Employee's original solution (4 leave days)
             const solution1 = {
-                title: "Employee's Solution (4 Leave Days)",
-                description: "Work 11 shifts and take 4 leave days: 11×12 + 4×8 = 164h",
+                title: "Soluția Angajatului (4 Zile Concediu)",
+                description: "Lucrează 11 ture și ia 4 zile concediu: 11×12 + 4×8 = 164h",
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 29], // 11 shifts
                 leaveDays: [24, 29, 30, 31],
-                calculation: "11 shifts × 12h = 132h + 4 leave days × 8h = 32h → Total: 164h"
+                calculation: "11 ture × 12h = 132h + 4 zile concediu × 8h = 32h → Total: 164h"
             };
             
             // Solution 2: Alternative 4 leave days
             const solution2 = {
-                title: "Alternative (4 Leave Days)",
-                description: "Different distribution of 11 shifts and 4 leave days",
+                title: "Alternativă (4 Zile Concediu)",
+                description: "Distribuție diferită a 11 ture și 4 zile concediu",
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 25],
                 leaveDays: [2, 3, 30, 31],
-                calculation: "11 shifts × 12h = 132h + 4 leave days × 8h = 32h → Total: 164h"
+                calculation: "11 ture × 12h = 132h + 4 zile concediu × 8h = 32h → Total: 164h"
             };
             
             // Solution 3: 1 leave day solution
             const solution3 = {
-                title: "Minimal Leave (1 Leave Day)",
-                description: "Work 13 shifts and take only 1 leave day: 13×12 + 1×8 = 164h",
+                title: "Concediu Minim (1 Zi Concediu)",
+                description: "Lucrează 13 ture și ia doar 1 zi concediu: 13×12 + 1×8 = 164h",
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 24, 25, 29], // 13 shifts
                 leaveDays: [31],
-                calculation: "13 shifts × 12h = 156h + 1 leave day × 8h = 8h → Total: 164h"
+                calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
             };
             
             // Solution 4: Convert shifts to leave days
             const solution4 = {
-                title: "Shift Conversion (2 Leave Days)",
-                description: "Work 13 original shifts but convert 2 to leave days",
+                title: "Conversie Ture (2 Zile Concediu)",
+                description: "Lucrează 13 ture originale dar convertește 2 în zile de concediu",
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 24, 25, 29], // 13 of original 15
                 leaveDays: [28, 31], // Convert day shift 28 and add one more
-                calculation: "13 shifts × 12h = 156h + 1 leave day × 8h = 8h → Total: 164h"
+                calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
             };
             
             const solutions = [solution1, solution2, solution3, solution4];
@@ -453,7 +453,7 @@
                 solutionElement.className = 'solution';
                 
                 const title = document.createElement('h3');
-                title.textContent = `Solution ${index + 1}: ${solution.title}`;
+                title.textContent = `Soluția ${index + 1}: ${solution.title}`;
                 solutionElement.appendChild(title);
                 
                 const description = document.createElement('p');
@@ -461,11 +461,11 @@
                 solutionElement.appendChild(description);
                 
                 const shiftsList = document.createElement('div');
-                shiftsList.innerHTML = `<strong>Shifts (${solution.shifts.length}):</strong> ${solution.shifts.join(', ')}`;
+                shiftsList.innerHTML = `<strong>Ture (${solution.shifts.length}):</strong> ${solution.shifts.join(', ')}`;
                 solutionElement.appendChild(shiftsList);
                 
                 const leaveList = document.createElement('div');
-                leaveList.innerHTML = `<strong>Leave Days (${solution.leaveDays.length}):</strong> ${solution.leaveDays.join(', ')}`;
+                leaveList.innerHTML = `<strong>Zile Concediu (${solution.leaveDays.length}):</strong> ${solution.leaveDays.join(', ')}`;
                 solutionElement.appendChild(leaveList);
                 
                 const stats = document.createElement('div');
