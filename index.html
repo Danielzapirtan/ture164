@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshift Calendar - December 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a73e8, #6c5ce7);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 10px;
+            margin: 5px;
+        }
+        
+        .summary-item h3 {
+            font-size: 1.8rem;
+            color: #1a73e8;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 15px;
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 4px;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .day-header {
+            background-color: #1a73e8;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        
+        .day {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .day:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .date {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .status {
+            font-size: 0.85rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .holiday {
+            background-color: #ff7675;
+            color: white;
+        }
+        
+        .night-shift {
+            background-color: #2d3436;
+            color: white;
+        }
+        
+        .day-shift {
+            background-color: #fdcb6e;
+            color: #333;
+        }
+        
+        .leave-day {
+            background-color: #00b894;
+            color: white;
+        }
+        
+        .regular-day {
+            background-color: #dfe6e9;
+            color: #333;
+        }
+        
+        .solutions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .solution {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .solution h3 {
+            color: #1a73e8;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .solution ul {
+            list-style-type: none;
+        }
+        
+        .solution li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .solution li:last-child {
+            border-bottom: none;
+        }
+        
+        .solution-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .calendar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .day-header {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calendar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Workshift Calendar - December 2025</h1>
+            <p>Manage your shifts, holidays, and leave days efficiently</p>
+        </header>
+        
+        <div class="summary">
+            <div class="summary-item">
+                <h3>164</h3>
+                <p>Total Hours</p>
+            </div>
+            <div class="summary-item">
+                <h3>12</h3>
+                <p>Shift Hours</p>
+            </div>
+            <div class="summary-item">
+                <h3>8</h3>
+                <p>Leave Hours</p>
+            </div>
+            <div class="summary-item">
+                <h3>11</h3>
+                <p>Holidays</p>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box holiday"></div>
+                <span>Holiday</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box night-shift"></div>
+                <span>Night Shift</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box day-shift"></div>
+                <span>Day Shift</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box leave-day"></div>
+                <span>Leave Day</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box regular-day"></div>
+                <span>Regular Day</span>
+            </div>
+        </div>
+        
+        <div class="calendar" id="calendar">
+            <!-- Calendar will be generated by JavaScript -->
+        </div>
+        
+        <div class="solutions" id="solutions">
+            <!-- Solutions will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data for December 2025
+        const monthData = {
+            month: "December",
+            year: 2025,
+            totalHours: 164,
+            shiftHours: 12,
+            leaveHours: 8,
+            nightShifts: [1, 5, 9, 13, 17, 21, 25, 29],
+            dayShifts: [4, 8, 12, 16, 20, 24, 28],
+            holidays: [1, 6, 7, 13, 14, 20, 21, 25, 26, 27, 28],
+            daysInMonth: 31,
+            firstDay: 0 // 0 = Sunday, 1 = Monday, etc. December 1, 2025 is a Monday
+        };
+
+        // Generate calendar
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'day-header';
+                dayHeader.textContent = day;
+                calendar.appendChild(dayHeader);
+            });
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < monthData.firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day empty';
+                calendar.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= monthData.daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                
+                const dateElement = document.createElement('div');
+                dateElement.className = 'date';
+                dateElement.textContent = day;
+                dayElement.appendChild(dateElement);
+                
+                // Determine day status
+                let status = '';
+                let statusClass = '';
+                
+                if (monthData.holidays.includes(day)) {
+                    status = 'Holiday';
+                    statusClass = 'holiday';
+                } else if (monthData.nightShifts.includes(day)) {
+                    status = 'Night Shift';
+                    statusClass = 'night-shift';
+                } else if (monthData.dayShifts.includes(day)) {
+                    status = 'Day Shift';
+                    statusClass = 'day-shift';
+                } else {
+                    status = 'Regular Day';
+                    statusClass = 'regular-day';
+                }
+                
+                const statusElement = document.createElement('div');
+                statusElement.className = `status ${statusClass}`;
+                statusElement.textContent = status;
+                dayElement.appendChild(statusElement);
+                
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        // Generate leave day solutions
+        function generateSolutions() {
+            const solutionsContainer = document.getElementById('solutions');
+            
+            // Solution 1: Maximize consecutive days off
+            const solution1 = {
+                title: "Maximize Consecutive Days Off",
+                description: "Take leave on regular days to create longer breaks",
+                leaveDays: [2, 3, 10, 11, 18, 19, 30, 31],
+                totalLeaveHours: 64
+            };
+            
+            // Solution 2: Balance work and rest
+            const solution2 = {
+                title: "Balanced Work-Rest Schedule",
+                description: "Spread leave days evenly throughout the month",
+                leaveDays: [2, 3, 10, 15, 18, 22, 30, 31],
+                totalLeaveHours: 64
+            };
+            
+            // Solution 3: Focus on weekdays
+            const solution3 = {
+                title: "Weekday Leave Strategy",
+                description: "Take leave on weekdays to extend weekends",
+                leaveDays: [2, 3, 10, 11, 15, 18, 22, 30],
+                totalLeaveHours: 64
+            };
+            
+            const solutions = [solution1, solution2, solution3];
+            
+            solutions.forEach((solution, index) => {
+                const solutionElement = document.createElement('div');
+                solutionElement.className = 'solution';
+                
+                const title = document.createElement('h3');
+                title.textContent = `Solution ${index + 1}: ${solution.title}`;
+                solutionElement.appendChild(title);
+                
+                const description = document.createElement('p');
+                description.textContent = solution.description;
+                solutionElement.appendChild(description);
+                
+                const leaveList = document.createElement('ul');
+                solution.leaveDays.forEach(day => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `December ${day} - Leave Day (8 hours)`;
+                    leaveList.appendChild(listItem);
+                });
+                solutionElement.appendChild(leaveList);
+                
+                const stats = document.createElement('div');
+                stats.className = 'solution-stats';
+                stats.textContent = `Total Leave Hours: ${solution.totalLeaveHours}`;
+                solutionElement.appendChild(stats);
+                
+                solutionsContainer.appendChild(solutionElement);
+            });
+        }
+
+        // Initialize the calendar and solutions
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+            generateSolutions();
+        });
+    </script>
+</body>
+</html>
