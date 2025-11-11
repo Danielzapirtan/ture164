@@ -436,15 +436,24 @@
             };
             
             // Solution 4: 1 leave day solution
-            /*const solution4 = {
+            const solution4 = {
                 title: "Concediu Minim (1 Zi Concediu)",
                 description: "Lucrează 13 ture și ia doar 1 zi concediu: 13×12 + 1×8 = 164h",
-                shifts: [1, 4, 5, 12, 13, 16, 17, 20, 21, 24, 25, 28, 29], // 13 shifts
-                leaveDays: [8],
+                shifts: [1, 4, 5, 8, 9, 12, 13, 16, 17, 20, 21, 24, 29], // 13 shifts
+                leaveDays: [31],
                 calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
-            };*/
+            };
             
-            const solutions = [solution1, solution2, solution3];
+            // Solution 5: 1 leave day solution
+            const solution5 = {
+                title: "Concediu Minim (1 Zi Concediu)",
+                description: "Lucrează 13 ture și ia doar 1 zi concediu: 13×12 + 1×8 = 164h",
+                shifts: [1, 4, 5, 8, 9, 12, 13, 16, 17, 24, 25, 28, 29], // 13 shifts
+                leaveDays: [31],
+                calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
+            };
+            
+            const solutions = [solution1, solution2, solution3, solution4, sokution5];
             
             solutions.forEach((solution, index) => {
                 const solutionElement = document.createElement('div');
