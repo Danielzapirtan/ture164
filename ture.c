@@ -77,7 +77,12 @@ void init_solution_list(SolutionList *list) {
 void add_solution(SolutionList *list, Solution *sol) {
     if (list->count >= list->capacity) {
         list->capacity *= 2;
-        list->solutions = realloc(list->solutions, list->capacity * sizeof(Solution));
+        Solution *new_solutions = realloc(list->solutions, list->capacity * sizeof(Solution));
+        if (!new_solutions) {
+            fprintf(stderr, "Memory allocation failed!\n");
+            exit(1);
+        }
+        list->solutions = new_solutions;
     }
     list->solutions[list->count++] = *sol;
 }
@@ -90,23 +95,32 @@ void find_solutions(SolutionList *list, Solution *current, int day_idx) {
         return;
     }
     
-    // Early pruning
-    int remaining_days = DAYS_IN_MONTH - day_idx;
-    int max_possible = current->total_hours + (remaining_days * SHIFT_HOURS);
-    int min_possible = current->total_hours;
+    // Better pruning: calculate exact bounds
+    int remaining_shifts = 0;
+    int remaining_leave_hours = 0;
     
-    // Calculate minimum possible from remaining days
     for (int i = day_idx; i < DAYS_IN_MONTH; i++) {
+        if (calendar[i].is_day_shift || calendar[i].is_night_shift) {
+            remaining_shifts++;
+        }
         if (!calendar[i].is_holiday) {
-            // Could take leave on all non-holidays
+            remaining_leave_hours += LEAVE_HOURS;
         }
     }
+    
+    int max_possible = current->total_hours + (remaining_shifts * SHIFT_HOURS) + remaining_leave_hours;
+    int min_possible = current->total_hours;
     
     if (max_possible < TARGET_HOURS || current->total_hours > TARGET_HOURS) {
         return;
     }
     
     Day *d = &calendar[day_idx];
+    
+    // Important: Can't work both day and night shift on same day
+    // If day has both shifts available, they are mutually exclusive
+    
+    int has_shift = d->is_day_shift || d->is_night_shift;
     
     // Option 1: Work day shift (if available)
     if (d->is_day_shift) {
@@ -121,8 +135,19 @@ void find_solutions(SolutionList *list, Solution *current, int day_idx) {
         if (d->is_holiday) current->holiday_shifts--;
     }
     
-    // Option 2: Work night shift (if available)
-    if (d->is_night_shift) {
+    // Option 2: Work night shift (if available and day shift not already counted)
+    if (d->is_night_shift && !d->is_day_shift) {
+        current->worked_shifts[day_idx] = 2;
+        current->total_hours += SHIFT_HOURS;
+        if (d->is_holiday) current->holiday_shifts++;
+        
+        find_solutions(list, current, day_idx + 1);
+        
+        current->worked_shifts[day_idx] = 0;
+        current->total_hours -= SHIFT_HOURS;
+        if (d->is_holiday) current->holiday_shifts--;
+    } else if (d->is_night_shift && d->is_day_shift) {
+        // Both shifts available - night is alternative to day
         current->worked_shifts[day_idx] = 2;
         current->total_hours += SHIFT_HOURS;
         if (d->is_holiday) current->holiday_shifts++;
@@ -134,7 +159,7 @@ void find_solutions(SolutionList *list, Solution *current, int day_idx) {
         if (d->is_holiday) current->holiday_shifts--;
     }
     
-    // Option 3: Take leave (only counts if not holiday)
+    // Option 3: Take leave (only counts if not holiday, can't combine with working)
     if (!d->is_holiday) {
         current->leave_days[day_idx] = 1;
         current->total_hours += LEAVE_HOURS;
@@ -225,7 +250,20 @@ int main() {
     }
     printf("\n\n");
     
-    printf("Searching for solutions...\n");
+    // Show overlaps
+    printf("Days with both shift types available:\n");
+    int has_overlap = 0;
+    for (int i = 0; i < DAYS_IN_MONTH; i++) {
+        if (calendar[i].is_day_shift && calendar[i].is_night_shift) {
+            printf("  Dec %d%s\n", i + 1, calendar[i].is_holiday ? " (holiday)" : "");
+            has_overlap = 1;
+        }
+    }
+    if (!has_overlap) printf("  (none)\n");
+    printf("\n");
+    
+    printf("Searching for solutions (this may take a moment)...\n");
+    fflush(stdout);
     
     SolutionList list;
     init_solution_list(&list);
@@ -241,9 +279,14 @@ int main() {
         // Sort solutions by optimization criteria
         qsort(list.solutions, list.count, sizeof(Solution), compare_solutions);
         
-        // Print all solutions
-        for (int i = 0; i < list.count; i++) {
+        // Print first 20 solutions or all if less
+        int print_count = list.count < 20 ? list.count : 20;
+        for (int i = 0; i < print_count; i++) {
             print_solution(&list.solutions[i], i + 1);
+        }
+        
+        if (list.count > 20) {
+            printf("\n... and %d more solutions (showing top 20)\n", list.count - 20);
         }
         
         printf("\n========================================\n");
