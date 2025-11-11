@@ -72,9 +72,13 @@ void init_solution_list(SolutionList *list) {
     list->capacity = 1000;
     list->count = 0;
     list->solutions = malloc(list->capacity * sizeof(Solution));
+    if (!list->solutions) {
+        fprintf(stderr, "Memory allocation failed!\n");
+        exit(1);
+    }
 }
 
-void add_solution(SolutionList *list, Solution *sol) {
+void add_solution(SolutionList *list, const Solution *sol) {
     if (list->count >= list->capacity) {
         list->capacity *= 2;
         Solution *new_solutions = realloc(list->solutions, list->capacity * sizeof(Solution));
@@ -84,10 +88,16 @@ void add_solution(SolutionList *list, Solution *sol) {
         }
         list->solutions = new_solutions;
     }
-    list->solutions[list->count++] = *sol;
+    list->solutions[list->count] = *sol;
+    list->count++;
 }
 
 void find_solutions(SolutionList *list, Solution *current, int day_idx) {
+    // Early termination if we've exceeded target hours
+    if (current->total_hours > TARGET_HOURS) {
+        return;
+    }
+    
     if (day_idx == DAYS_IN_MONTH) {
         if (current->total_hours == TARGET_HOURS && current->leave_count > 0) {
             add_solution(list, current);
@@ -95,81 +105,58 @@ void find_solutions(SolutionList *list, Solution *current, int day_idx) {
         return;
     }
     
-    // Better pruning: calculate exact bounds
-    int remaining_shifts = 0;
-    int remaining_leave_hours = 0;
+    // Calculate remaining potential hours more accurately
+    int remaining_days = DAYS_IN_MONTH - day_idx;
+    int max_remaining_hours = 0;
+    int min_remaining_hours = 0;
     
     for (int i = day_idx; i < DAYS_IN_MONTH; i++) {
-        if (calendar[i].is_day_shift || calendar[i].is_night_shift) {
-            remaining_shifts++;
+        Day *d = &calendar[i];
+        if (d->is_day_shift || d->is_night_shift) {
+            max_remaining_hours += SHIFT_HOURS;
         }
-        if (!calendar[i].is_holiday) {
-            remaining_leave_hours += LEAVE_HOURS;
+        if (!d->is_holiday) {
+            max_remaining_hours += LEAVE_HOURS;
         }
     }
     
-    int max_possible = current->total_hours + (remaining_shifts * SHIFT_HOURS) + remaining_leave_hours;
-    int min_possible = current->total_hours;
-    
-    if (max_possible < TARGET_HOURS || current->total_hours > TARGET_HOURS) {
-        return;
+    if (current->total_hours + max_remaining_hours < TARGET_HOURS) {
+        return; // Can't reach target even with maximum hours
     }
     
     Day *d = &calendar[day_idx];
     
-    // Important: Can't work both day and night shift on same day
-    // If day has both shifts available, they are mutually exclusive
-    
-    int has_shift = d->is_day_shift || d->is_night_shift;
+    // Create copies for recursive calls to avoid corruption
+    Solution current_copy;
     
     // Option 1: Work day shift (if available)
     if (d->is_day_shift) {
-        current->worked_shifts[day_idx] = 1;
-        current->total_hours += SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts++;
+        current_copy = *current;
+        current_copy.worked_shifts[day_idx] = 1;
+        current_copy.total_hours += SHIFT_HOURS;
+        if (d->is_holiday) current_copy.holiday_shifts++;
         
-        find_solutions(list, current, day_idx + 1);
-        
-        current->worked_shifts[day_idx] = 0;
-        current->total_hours -= SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts--;
+        find_solutions(list, &current_copy, day_idx + 1);
     }
     
-    // Option 2: Work night shift (if available and day shift not already counted)
-    if (d->is_night_shift && !d->is_day_shift) {
-        current->worked_shifts[day_idx] = 2;
-        current->total_hours += SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts++;
+    // Option 2: Work night shift (if available)
+    if (d->is_night_shift) {
+        current_copy = *current;
+        current_copy.worked_shifts[day_idx] = 2;
+        current_copy.total_hours += SHIFT_HOURS;
+        if (d->is_holiday) current_copy.holiday_shifts++;
         
-        find_solutions(list, current, day_idx + 1);
-        
-        current->worked_shifts[day_idx] = 0;
-        current->total_hours -= SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts--;
-    } else if (d->is_night_shift && d->is_day_shift) {
-        // Both shifts available - night is alternative to day
-        current->worked_shifts[day_idx] = 2;
-        current->total_hours += SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts++;
-        
-        find_solutions(list, current, day_idx + 1);
-        
-        current->worked_shifts[day_idx] = 0;
-        current->total_hours -= SHIFT_HOURS;
-        if (d->is_holiday) current->holiday_shifts--;
+        find_solutions(list, &current_copy, day_idx + 1);
     }
     
-    // Option 3: Take leave (only counts if not holiday, can't combine with working)
+    // Option 3: Take leave (only counts if not holiday)
     if (!d->is_holiday) {
-        current->leave_days[day_idx] = 1;
-        current->total_hours += LEAVE_HOURS;
-        current->leave_count++;
+        current_copy = *current;
+        current_copy.leave_days[day_idx] = 1;
+        current_copy.total_hours += LEAVE_HOURS;
+        current_copy.leave_count++;
         
-        find_solutions(list, current, day_idx + 1);
-        
-        current->leave_days[day_idx] = 0;
-        current->total_hours -= LEAVE_HOURS;
-        current->leave_count--;
+        find_solutions(list, &current_copy, day_idx + 1);
     }
     
     // Option 4: Do nothing (neither work nor leave)
@@ -177,8 +164,8 @@ void find_solutions(SolutionList *list, Solution *current, int day_idx) {
 }
 
 int compare_solutions(const void *a, const void *b) {
-    Solution *sol_a = (Solution *)a;
-    Solution *sol_b = (Solution *)b;
+    const Solution *sol_a = (const Solution *)a;
+    const Solution *sol_b = (const Solution *)b;
     
     // First, sort by holiday shifts (descending)
     if (sol_b->holiday_shifts != sol_a->holiday_shifts) {
@@ -189,7 +176,7 @@ int compare_solutions(const void *a, const void *b) {
     return sol_b->leave_count - sol_a->leave_count;
 }
 
-void print_solution(Solution *sol, int idx) {
+void print_solution(const Solution *sol, int idx) {
     printf("\n=== Solution %d ===\n", idx);
     printf("Total hours: %d (Target: %d)\n", sol->total_hours, TARGET_HOURS);
     printf("Holiday shifts worked: %d\n", sol->holiday_shifts);
@@ -279,19 +266,21 @@ int main() {
         // Sort solutions by optimization criteria
         qsort(list.solutions, list.count, sizeof(Solution), compare_solutions);
         
-        // Print first 20 solutions or all if less
-        int print_count = list.count < 20 ? list.count : 20;
+        // Print first 10 solutions or all if less
+        int print_count = list.count < 10 ? list.count : 10;
         for (int i = 0; i < print_count; i++) {
             print_solution(&list.solutions[i], i + 1);
         }
         
-        if (list.count > 20) {
-            printf("\n... and %d more solutions (showing top 20)\n", list.count - 20);
+        if (list.count > 10) {
+            printf("\n... and %d more solutions (showing top 10)\n", list.count - 10);
         }
         
         printf("\n========================================\n");
         printf("Best solution (most holiday shifts + leave days):\n");
         print_solution(&list.solutions[0], 1);
+    } else {
+        printf("No solutions found. Consider adjusting constraints.\n");
     }
     
     free(list.solutions);
