@@ -235,6 +235,7 @@
         <header>
             <h1>Calendar Ture de Lucru - Decembrie 2025</h1>
             <p>Ture × 12h + Zile Concediu × 8h = 164 Ore Totale</p>
+            <p>Aplicația este în lucru. Vă rugăm reveniți ulterior.</p>
         </header>
         
         <div class="summary">
@@ -417,11 +418,11 @@
             };
             
             // Solution 2: Alternative 4 leave days
-            const solution2 = {
+            /*const solution2 = {
                 title: "Alternativă (4 Zile Concediu)",
                 description: "Distribuție diferită a 11 ture și 4 zile concediu",
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 24],
-                leaveDays: [15, 29, 30, 31],
+                leaveDays: [2, 29, 30, 31],
                 calculation: "11 ture × 12h = 132h + 4 zile concediu × 8h = 32h → Total: 164h"
             };
             
@@ -432,7 +433,7 @@
                 shifts: [1, 4, 5, 8, 9, 12, 16, 17, 20, 21, 24, 25, 29], // 13 shifts
                 leaveDays: [31],
                 calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
-            };
+            };*/
             
             // Solution 4: Convert shifts to leave days
             /*const solution4 = {
@@ -443,7 +444,7 @@
                 calculation: "13 ture × 12h = 156h + 1 zi concediu × 8h = 8h → Total: 164h"
             };*/
             
-            const solutions = [solution1, solution2, solution3];
+            const solutions = [solution1];
             
             solutions.forEach((solution, index) => {
                 const solutionElement = document.createElement('div');
