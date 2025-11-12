@@ -69,11 +69,9 @@ function toggleDayStatus(dayElement, day) {
     if (dayElement.classList.contains("holiday")) {
       if (dayElement.classList.contains("leave")) {
         dayElement.classList.remove("leave");
-        totalHours -= 8;
         leaveDays -= 1;
       } else {
         dayElement.classList.add("leave");
-        totalHours += 8;
         leaveDays += 1;
       }
     } else {
