@@ -208,26 +208,26 @@ function main() {
     init_calendar();
     
     notify("Calendar setup:");
-    process.stdout.write("Holidays: ");
+    notify("Holidays: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (calendar[i].is_holiday) {
-            process.stdout.write((i + 1) + " ");
+            notify((i + 1) + " ");
         }
     }
     notify();
     
-    process.stdout.write("Day shifts: ");
+    notify("Day shifts: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (calendar[i].is_day_shift) {
-            process.stdout.write((i + 1) + " ");
+            notify((i + 1) + " ");
         }
     }
     notify();
     
-    process.stdout.write("Night shifts: ");
+    notify("Night shifts: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (calendar[i].is_night_shift) {
-            process.stdout.write((i + 1) + " ");
+            notify((i + 1) + " ");
         }
     }
     notify("\n");
