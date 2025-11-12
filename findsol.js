@@ -93,7 +93,66 @@ function init_solution_list(list) {
 }
 
 function find_solutions(list, current, day_idx) {
-    // TODO
+    // Base case: reached end of month
+    if (day_idx >= DAYS_IN_MONTH) {
+        // Check if solution meets target hours
+        if (current.total_hours >= TARGET_HOURS) {
+            add_solution(list, current);
+        }
+        return;
+    }
+
+    // If we already have enough solutions, stop searching
+    if (list.count >= list.capacity) {
+        return;
+    }
+
+    const currentDay = calendar[day_idx];
+    
+    // Option 1: Take leave on this day
+    if (current.leave_count < Math.floor(DAYS_IN_MONTH / 7)) { // Limit leave days
+        const newCurrentLeave = new Solution();
+        newCurrentLeave.worked_shifts = [...current.worked_shifts];
+        newCurrentLeave.leave_days = [...current.leave_days];
+        newCurrentLeave.total_hours = current.total_hours;
+        newCurrentLeave.holiday_shifts = current.holiday_shifts;
+        newCurrentLeave.leave_count = current.leave_count + 1;
+        
+        newCurrentLeave.leave_days[day_idx] = 1;
+        
+        find_solutions(list, newCurrentLeave, day_idx + 1);
+    }
+
+    // Option 2: Work day shift if available
+    if (currentDay.is_day_shift) {
+        const newCurrentDay = new Solution();
+        newCurrentDay.worked_shifts = [...current.worked_shifts];
+        newCurrentDay.leave_days = [...current.leave_days];
+        newCurrentDay.total_hours = current.total_hours + SHIFT_HOURS;
+        newCurrentDay.holiday_shifts = current.holiday_shifts + (currentDay.is_holiday ? 1 : 0);
+        newCurrentDay.leave_count = current.leave_count;
+        
+        newCurrentDay.worked_shifts[day_idx] = 1; // 1 for day shift
+        
+        find_solutions(list, newCurrentDay, day_idx + 1);
+    }
+
+    // Option 3: Work night shift if available
+    if (currentDay.is_night_shift) {
+        const newCurrentNight = new Solution();
+        newCurrentNight.worked_shifts = [...current.worked_shifts];
+        newCurrentNight.leave_days = [...current.leave_days];
+        newCurrentNight.total_hours = current.total_hours + SHIFT_HOURS;
+        newCurrentNight.holiday_shifts = current.holiday_shifts + (currentDay.is_holiday ? 1 : 0);
+        newCurrentNight.leave_count = current.leave_count;
+        
+        newCurrentNight.worked_shifts[day_idx] = 2; // 2 for night shift
+        
+        find_solutions(list, newCurrentNight, day_idx + 1);
+    }
+
+    // Option 4: Do nothing (regular day off)
+    find_solutions(list, current, day_idx + 1);
 }
 
 function print_solution(sol, idx) {
