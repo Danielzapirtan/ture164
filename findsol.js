@@ -3,6 +3,14 @@ const TARGET_HOURS = 164;
 const SHIFT_HOURS = 12;
 const LEAVE_HOURS = 8;
 
+const notification = document.getElementById("notification");
+let mynotification = ``;
+
+function notify(string) {
+	mynotification += `${string}`;
+	notification.innerHTML = mynotification;
+}
+
 class Day {
     constructor(day) {
         this.day = day;
@@ -168,45 +176,45 @@ function compare_solutions(a, b) {
 }
 
 function print_solution(sol, idx) {
-    console.log(`\n=== Solution ${idx} ===`);
-    console.log(`Total hours: ${sol.total_hours} (Target: ${TARGET_HOURS})`);
-    console.log(`Holiday shifts worked: ${sol.holiday_shifts}`);
-    console.log(`Leave days taken: ${sol.leave_count}`);
+    notify(`\n=== Solution ${idx} ===`);
+    notify(`Total hours: ${sol.total_hours} (Target: ${TARGET_HOURS})`);
+    notify(`Holiday shifts worked: ${sol.holiday_shifts}`);
+    notify(`Leave days taken: ${sol.leave_count}`);
     
-    console.log("\nWorked shifts:");
+    notify("\nWorked shifts:");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (sol.worked_shifts[i]) {
-            console.log(`  Dec ${(i + 1).toString().padStart(2, ' ')} (${calendar[i].is_holiday ? "Holiday" : "Workday"}): ${sol.worked_shifts[i] === 1 ? "Day" : "Night"} shift${calendar[i].is_holiday ? " [HOLIDAY]" : ""}`);
+            notify(`  Dec ${(i + 1).toString().padStart(2, ' ')} (${calendar[i].is_holiday ? "Holiday" : "Workday"}): ${sol.worked_shifts[i] === 1 ? "Day" : "Night"} shift${calendar[i].is_holiday ? " [HOLIDAY]" : ""}`);
         }
     }
     
-    console.log("\nLeave days:");
+    notify("\nLeave days:");
     let has_leave = false;
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (sol.leave_days[i]) {
-            console.log(`  Dec ${(i + 1).toString().padStart(2, ' ')}`);
+            notify(`  Dec ${(i + 1).toString().padStart(2, ' ')}`);
             has_leave = true;
         }
     }
     if (!has_leave) {
-        console.log("  (none)");
+        notify("  (none)");
     }
 }
 
 function main() {
-    console.log("Shift Calendar Solver for December 2025");
-    console.log("========================================\n");
+    notify("Shift Calendar Solver for December 2025");
+    notify("========================================\n");
     
     init_calendar();
     
-    console.log("Calendar setup:");
+    notify("Calendar setup:");
     process.stdout.write("Holidays: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
         if (calendar[i].is_holiday) {
             process.stdout.write((i + 1) + " ");
         }
     }
-    console.log();
+    notify();
     
     process.stdout.write("Day shifts: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
@@ -214,7 +222,7 @@ function main() {
             process.stdout.write((i + 1) + " ");
         }
     }
-    console.log();
+    notify();
     
     process.stdout.write("Night shifts: ");
     for (let i = 0; i < DAYS_IN_MONTH; i++) {
@@ -222,9 +230,9 @@ function main() {
             process.stdout.write((i + 1) + " ");
         }
     }
-    console.log("\n");
+    notify("\n");
     
-    console.log("Searching for solutions...");
+    notify("Searching for solutions...");
     
     const list = new SolutionList();
     init_solution_list(list);
@@ -233,7 +241,7 @@ function main() {
     
     find_solutions(list, current, 0);
     
-    console.log(`Found ${list.count} solutions!`);
+    notify(`Found ${list.count} solutions!`);
     
     if (list.count > 0) {
         // Sort solutions by optimization criteria
@@ -245,8 +253,8 @@ function main() {
             print_solution(list.solutions[i], i + 1);
         }
         
-        console.log("\n========================================");
-        console.log("Best solution (most holiday shifts + leave days):");
+        notify("\n========================================");
+        notify("Best solution (most holiday shifts + leave days):");
         print_solution(list.solutions[0], 1);
     }
 }
