@@ -82,25 +82,7 @@ function init_solution_list(list) {
 }
 
 function add_solution(list, sol) {
-    if (list.count >= list.capacity) {
-        list.capacity *= 2;
-        // In JavaScript, we can just push to array, but for compatibility with C logic:
-        const newSolutions = new Array(list.capacity);
-        for (let i = 0; i < list.solutions.length; i++) {
-            newSolutions[i] = list.solutions[i];
-        }
-        list.solutions = newSolutions;
-    }
-    // Create a deep copy of the solution
-    const newSol = new Solution();
-    Object.assign(newSol, {
-        worked_shifts: [...sol.worked_shifts],
-        leave_days: [...sol.leave_days],
-        total_hours: sol.total_hours,
-        holiday_shifts: sol.holiday_shifts,
-        leave_count: sol.leave_count
-    });
-    list.solutions[list.count++] = newSol;
+    list.push(sol);
 }
 
 function find_solutions(list, current, day_idx) {
