@@ -150,8 +150,10 @@ function find_solutions(list, current, day_idx) {
         current.leave_count--;
     }
     
-    // Option 4: Do nothing (neither work nor leave)
-    find_solutions(list, current, day_idx + 1);
+    // Option 4: Do nothing (only for holidays - they don't need assignment)
+    if (d.is_holiday) {
+        find_solutions(list, current, day_idx + 1);
+    }
 }
 
 function compare_solutions(a, b) {
