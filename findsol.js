@@ -3,9 +3,6 @@ const TARGET_HOURS = 164;
 const SHIFT_HOURS = 12;
 const LEAVE_HOURS = 8;
 
-//const notification = document.getElementById("notification");
-let mynotification = ``;
-
 function notify(string) {
 	console.log(string);
 }
