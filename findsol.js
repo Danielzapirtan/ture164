@@ -7,8 +7,6 @@ const LEAVE_HOURS = 8;
 let mynotification = ``;
 
 function notify(string) {
-	mynotification += `${string}`;
-	//notification.innerHTML = mynotification;
 	console.log(string);
 }
 
