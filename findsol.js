@@ -82,6 +82,7 @@ function init_solution_list(list) {
 }
 
 function add_solution(list, sol) {
+    print_solution(sol, 0);
     list.push(sol);
 }
 
