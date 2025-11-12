@@ -29,14 +29,6 @@ class Solution {
     }
 }
 
-class SolutionList {
-    constructor() {
-        this.solutions = [];
-        this.count = 0;
-        this.capacity = 1000;
-    }
-}
-
 let calendar = new Array(DAYS_IN_MONTH);
 
 function init_calendar() {
@@ -74,14 +66,33 @@ function init_calendar() {
     }
 }
 
+function add_solution(list, sol) {
+    if (list.count < list.capacity) {
+        // Create a deep copy of the solution to avoid reference issues
+        const newSol = new Solution();
+        newSol.worked_shifts = [...sol.worked_shifts];
+        newSol.leave_days = [...sol.leave_days];
+        newSol.total_hours = sol.total_hours;
+        newSol.holiday_shifts = sol.holiday_shifts;
+        newSol.leave_count = sol.leave_count;
+        
+        list.solutions[list.count] = newSol;
+        list.count++;
+    }
+}
+
+class SolutionList {
+    constructor() {
+        this.solutions = [];
+        this.count = 0;
+        this.capacity = 1000;
+    }
+}
+
 function init_solution_list(list) {
     list.capacity = 1000;
     list.count = 0;
     list.solutions = new Array(list.capacity);
-}
-
-function add_solution(list, sol) {
-    list.push(sol);
 }
 
 function find_solutions(list, current, day_idx) {
