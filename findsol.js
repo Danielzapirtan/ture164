@@ -93,77 +93,7 @@ function init_solution_list(list) {
 }
 
 function find_solutions(list, current, day_idx) {
-    if (day_idx === DAYS_IN_MONTH) {
-        if (current.total_hours === TARGET_HOURS && current.leave_count > 0) {
-            add_solution(list, current);
-        }
-        return;
-    }
-    
-    // Early pruning
-    const remaining_days = DAYS_IN_MONTH - day_idx;
-    const max_possible = current.total_hours + (remaining_days * SHIFT_HOURS);
-    const min_possible = current.total_hours;
-    
-    if (max_possible < TARGET_HOURS || current.total_hours > TARGET_HOURS) {
-        return;
-    }
-    
-    const d = calendar[day_idx];
-    
-    // Option 1: Work day shift (if available)
-    if (d.is_day_shift) {
-        current.worked_shifts[day_idx] = 1;
-        current.total_hours += SHIFT_HOURS;
-        if (d.is_holiday) current.holiday_shifts++;
-        
-        find_solutions(list, current, day_idx + 1);
-        
-        current.worked_shifts[day_idx] = 0;
-        current.total_hours -= SHIFT_HOURS;
-        if (d.is_holiday) current.holiday_shifts--;
-    }
-    
-    // Option 2: Work night shift (if available)
-    if (d.is_night_shift) {
-        current.worked_shifts[day_idx] = 2;
-        current.total_hours += SHIFT_HOURS;
-        if (d.is_holiday) current.holiday_shifts++;
-        
-        find_solutions(list, current, day_idx + 1);
-        
-        current.worked_shifts[day_idx] = 0;
-        current.total_hours -= SHIFT_HOURS;
-        if (d.is_holiday) current.holiday_shifts--;
-    }
-    
-    // Option 3: Take leave (only counts if not holiday)
-    if (!d.is_holiday) {
-        current.leave_days[day_idx] = 1;
-        current.total_hours += LEAVE_HOURS;
-        current.leave_count++;
-        
-        find_solutions(list, current, day_idx + 1);
-        
-        current.leave_days[day_idx] = 0;
-        current.total_hours -= LEAVE_HOURS;
-        current.leave_count--;
-    }
-    
-    // Option 4: Do nothing (only for holidays - they don't need assignment)
-    if (d.is_holiday) {
-        find_solutions(list, current, day_idx + 1);
-    }
-}
-
-function compare_solutions(a, b) {
-    // First, sort by holiday shifts (descending)
-    if (b.holiday_shifts !== a.holiday_shifts) {
-        return b.holiday_shifts - a.holiday_shifts;
-    }
-    
-    // Then by leave count (descending - more leave is better)
-    return b.leave_count - a.leave_count;
+    // TODO
 }
 
 function print_solution(sol, idx) {
