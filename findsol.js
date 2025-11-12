@@ -3,12 +3,13 @@ const TARGET_HOURS = 164;
 const SHIFT_HOURS = 12;
 const LEAVE_HOURS = 8;
 
-const notification = document.getElementById("notification");
+//const notification = document.getElementById("notification");
 let mynotification = ``;
 
 function notify(string) {
 	mynotification += `${string}`;
-	notification.innerHTML = mynotification;
+	//notification.innerHTML = mynotification;
+	console.log(string);
 }
 
 class Day {
@@ -82,7 +83,6 @@ function init_solution_list(list) {
 }
 
 function add_solution(list, sol) {
-    print_solution(sol, 0);
     list.push(sol);
 }
 
