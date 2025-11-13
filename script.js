@@ -76,7 +76,7 @@ let tura = 3;
 const holidayService = new RomanianHolidays();
 
 // Function to get December holidays for a specific year
-async function getDecemberHolidays(year = 2024) {
+async function getDecemberHolidays(year = 2025) {
     try {
         const allHolidays = await holidayService.getHolidays(year);
         if (!allHolidays) {
