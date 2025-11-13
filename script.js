@@ -1,3 +1,60 @@
+class RomanianHolidays {
+    constructor() {
+        this.baseUrl = 'https://date.nager.at/api/v3';
+    }
+
+    // Get all holidays for a year
+    async getHolidays(year = new Date().getFullYear()) {
+        try {
+            const response = await fetch(`${this.baseUrl}/PublicHolidays/${year}/RO`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching holidays:', error);
+            return null;
+        }
+    }
+
+    // Check if a specific date is a holiday
+    async isHoliday(date = new Date()) {
+        const year = date.getFullYear();
+        const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        const holidays = await this.getHolidays(year);
+        if (!holidays) return false;
+
+        return holidays.some(holiday => holiday.date === dateString);
+    }
+
+    // Get upcoming holidays
+    async getUpcomingHolidays(count = 5) {
+        const currentYear = new Date().getFullYear();
+        const holidays = await this.getHolidays(currentYear);
+        
+        if (!holidays) return [];
+
+        const today = new Date().toISOString().split('T')[0];
+        
+        return holidays
+            .filter(holiday => holiday.date >= today)
+            .slice(0, count);
+    }
+
+    // Get holidays for multiple years
+    async getHolidaysRange(startYear, endYear) {
+        const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+        const promises = years.map(year => this.getHolidays(year));
+        
+        try {
+            const results = await Promise.all(promises);
+            return results.flat();
+        } catch (error) {
+            console.error('Error fetching holiday range:', error);
+            return null;
+        }
+    }
+}
+
 const daysInDecember = 31;
 const holidays = [1, 25, 26];
 const saturdays = [6, 13, 20, 27];
