@@ -20,12 +20,6 @@ function updateStats() {
   document.getElementById("shift").innerHTML = `tura ${tura}`;
 }
 
-document.getElementById("switch-shift").addEventListener("click", () => {
-  tura++;
-  if (tura === 5) tura = 1;
-  render();
-});
-
 function render() {
   calendar.innerHTML = ``;
   totalHours = 0;
@@ -51,6 +45,13 @@ function render() {
   }
   updateStats();
 }
+
+document.getElementById("switch-shift").addEventListener("click", () => {
+  tura++;
+  if (tura === 5) tura = 1;
+  render();
+});
+
 
 render();
 
