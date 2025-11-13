@@ -101,7 +101,7 @@ async function getDecemberHolidays(year = 2025) {
 }
 
 async function updateHolidays() {
-    holidays = await getDecemberHolidays(2024);
+    holidays = await getDecemberHolidays(2025);
 }
 
 function updateStats() {
