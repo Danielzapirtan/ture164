@@ -13,41 +13,50 @@ const calendar = document.querySelector(".calendar");
 const totalHoursDisplay = document.getElementById("total-hours");
 const leaveDaysDisplay = document.getElementById("leave-days");
 let tura = 3;
+
 function updateStats() {
   totalHoursDisplay.textContent = totalHours;
   leaveDaysDisplay.textContent = leaveDays;
-  document.getElementById("shift").innerHTML = `${tura}`;
+  document.getElementById("shift").innerHTML = `tura ${tura}`;
 }
 
-document.getElementById("switch-shift").addEventListener("click" => {
+document.getElementById("switch-shift").addEventListener("click", () => {
   tura++;
-  if (tura === 5)
-    tura = 1;
+  if (tura === 5) tura = 1;
+  render();
   updateStats();
 });
 
-for (let day = 1; day <= daysInDecember; day++) {
-  const dayElement = document.createElement("div");
-  dayElement.classList.add("day");
-  dayElement.textContent = day;
-  if (
-    holidays.includes(day) ||
-    saturdays.includes(day) ||
-    sundays.includes(day)
-  ) {
-    dayElement.classList.add("holiday");
+function render() {
+  calendar.innerHTML = ``;
+  totalHours = 0;
+  for (let day = 1; day <= daysInDecember; day++) {
+    const dayElement = document.createElement("div");
+    dayElement.classList.add("day");
+    dayElement.textContent = day;
+    if (
+      holidays.includes(day) ||
+      saturdays.includes(day) ||
+      sundays.includes(day)
+    ) {
+      dayElement.classList.add("holiday");
+    }
+    if ((day + 7 - tura) % 4 < 2) {
+      dayElement.classList.add("workday");
+      totalHours += hoursPerWorkedDay;
+    }
+    dayElement.addEventListener("click", () =>
+      toggleDayStatus(dayElement, day)
+    );
+    calendar.appendChild(dayElement);
   }
-  if ((day + shift + 1) % 4 < 2) {
-    dayElement.classList.add("workday");
-    totalHours += hoursPerWorkedDay;
-  }
-  dayElement.addEventListener("click", () => toggleDayStatus(dayElement, day));
-  calendar.appendChild(dayElement);
+  updateStats();
 }
-updateStats();
+
+render();
 
 function toggleDayStatus(dayElement, day) {
-  if ((day + shift + 1) % 4 < 2) {
+  if ((day + 7 - tura) % 4 < 2) {
     if (dayElement.classList.contains("holiday")) {
       if (dayElement.classList.contains("workday")) {
         dayElement.classList.remove("workday");
