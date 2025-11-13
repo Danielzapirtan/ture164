@@ -24,7 +24,6 @@ document.getElementById("switch-shift").addEventListener("click", () => {
   tura++;
   if (tura === 5) tura = 1;
   render();
-  updateStats();
 });
 
 function render() {
