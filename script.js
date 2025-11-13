@@ -56,7 +56,8 @@ class RomanianHolidays {
 }
 
 const daysInDecember = 31;
-const holidays = [1, 25, 26];
+// Remove hardcoded holidays and calculate them dynamically
+let holidays = [];
 const saturdays = [6, 13, 20, 27];
 const sundays = [7, 14, 21, 28];
 const normalDayshifts = [4, 8, 12, 16, 20, 24, 28];
@@ -71,13 +72,48 @@ const totalHoursDisplay = document.getElementById("total-hours");
 const leaveDaysDisplay = document.getElementById("leave-days");
 let tura = 3;
 
+// Initialize holiday service
+const holidayService = new RomanianHolidays();
+
+// Function to get December holidays for a specific year
+async function getDecemberHolidays(year = 2024) {
+    try {
+        const allHolidays = await holidayService.getHolidays(year);
+        if (!allHolidays) {
+            console.warn('Could not fetch holidays, using fallback');
+            return [1, 25, 26]; // Fallback to hardcoded values
+        }
+        
+        // Filter holidays that are in December and extract the day
+        const decemberHolidays = allHolidays
+            .filter(holiday => {
+                const month = parseInt(holiday.date.split('-')[1]);
+                return month === 12;
+            })
+            .map(holiday => parseInt(holiday.date.split('-')[2]));
+        
+        console.log('December holidays:', decemberHolidays);
+        return decemberHolidays;
+    } catch (error) {
+        console.error('Error getting December holidays:', error);
+        return [1, 25, 26]; // Fallback to hardcoded values
+    }
+}
+
+async function updateHolidays() {
+    holidays = await getDecemberHolidays(2024);
+}
+
 function updateStats() {
   totalHoursDisplay.textContent = totalHours;
   leaveDaysDisplay.textContent = leaveDays;
   document.getElementById("shift").innerHTML = `tura ${tura}`;
 }
 
-function render() {
+async function render() {
+  // Update holidays before rendering
+  await updateHolidays();
+  
   calendar.innerHTML = ``;
   totalHours = 0;
   for (let day = 1; day <= daysInDecember; day++) {
@@ -109,7 +145,7 @@ document.getElementById("switch-shift").addEventListener("click", () => {
   render();
 });
 
-
+// Initialize and render
 render();
 
 function toggleDayStatus(dayElement, day) {
