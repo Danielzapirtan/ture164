@@ -12,11 +12,19 @@ let leaveDays = 0;
 const calendar = document.querySelector(".calendar");
 const totalHoursDisplay = document.getElementById("total-hours");
 const leaveDaysDisplay = document.getElementById("leave-days");
-
+let tura = 3;
 function updateStats() {
   totalHoursDisplay.textContent = totalHours;
   leaveDaysDisplay.textContent = leaveDays;
+  document.getElementById("shift").innerHTML = `${tura}`;
 }
+
+document.getElementById("switch-shift").addEventListener("click" => {
+  tura++;
+  if (tura == 5)
+    tura = 1;/
+  updateStats();
+});
 
 for (let day = 1; day <= daysInDecember; day++) {
   const dayElement = document.createElement("div");
@@ -29,7 +37,7 @@ for (let day = 1; day <= daysInDecember; day++) {
   ) {
     dayElement.classList.add("holiday");
   }
-  if (normalDayshifts.includes(day) || normalNightshifts.includes(day)) {
+  if ((day + shift + 1) % 4 < 2) {
     dayElement.classList.add("workday");
     totalHours += hoursPerWorkedDay;
   }
@@ -39,7 +47,7 @@ for (let day = 1; day <= daysInDecember; day++) {
 updateStats();
 
 function toggleDayStatus(dayElement, day) {
-  if (day % 4 < 2) {
+  if ((day + shift + 1) % 4 < 2) {
     if (dayElement.classList.contains("holiday")) {
       if (dayElement.classList.contains("workday")) {
         dayElement.classList.remove("workday");
