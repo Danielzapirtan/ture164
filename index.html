@@ -1,68 +1,412 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>December 2025 Leave Planner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendar și Planificator Concedii</title>
+
+  <!-- PWA manifest + theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+
+  <!-- iOS PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Calendar">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+
   <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #2196F3;
+      --light-bg: #f5f5f5;
+      --border-color: #ddd;
+      --workday-color: #e6f7ff;
+      --holiday-color: #ffcccc;
+      --leave-color: #ccffcc;
+      --day-off-color: #ffebcc;
+    }
+    
     body {
       font-family: Arial, sans-serif;
+      padding: 10px;
+      background-color: var(--light-bg);
+      margin: 0;
     }
-
-    .calendar {
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .app-container {
+        flex-direction: row;
+      }
+      
+      .calendar-section, .planner-section {
+        flex: 1;
+      }
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    
+    /* Calendar Styles */
+    table { 
+      border-collapse: collapse; 
+      width: 100%; 
+    }
+    
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 8px;
+      width: 14%;
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    th { 
+      background-color: #f2f2f2; 
+    }
+    
+    .doy0, .doy1 { 
+      background-color: lightyellow; 
+    }
+    
+    .doy2 { 
+      background-color: #aaffaa; 
+    }
+    
+    .doy3 { 
+      background-color: #aaaaff; 
+    }
+    
+    .doy4 { 
+      background-color: var(--leave-color); 
+    }
+    
+    .controls {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .year-btn {
+      padding: 5px 10px; 
+      margin: 0 5px; 
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: white;
+    }
+    
+    .year-btn.active {
+      font-weight: bold;
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .holiday-buttons {
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    .holiday-btn {
+      padding: 8px 15px;
+      margin: 0 5px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .holiday-btn:hover { 
+      background-color: #e0e0e0; 
+    }
+    
+    .holiday-result {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f9f9f9;
+      color: #5555aa;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      text-align: center;
+      min-height: 20px;
+    }
+    
+    #selectedMonth {
+      font-weight: bold;
+      font-size: 24px;
+      color: #55aaaa;
+      margin: 15px 0;
+      text-align: center;
+    }
+    
+    .user-info {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f0f8ff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+    
+    /* Planner Styles */
+    .planner-calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
+      gap: 5px;
       margin: 20px 0;
     }
-
-    button {
-      border: 1px solid #ccc;
-      width: 40px;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-    }
-
+    
     .day {
-      border: 1px solid #ccc;
-      padding: 10px;
+      border: 1px solid var(--border-color);
+      padding: 8px;
       text-align: center;
       cursor: pointer;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
+    
     .day.workday {
-      background-color: #e6f7ff;
+      background-color: var(--workday-color);
     }
-
+    
+    .day.day-off {
+      background-color: var(--day-off-color);
+    }
+    
     .day.holiday {
-      background-color: #ffcccc;
+      background-color: var(--holiday-color);
     }
-
+    
     .day.leave {
-      background-color: #ccffcc;
+      background-color: var(--leave-color);
     }
-
+    
     .stats {
+      display: flex;
+      justify-content: space-between;
       margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .shift-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    
+    #switch-shift {
+      padding: 8px 15px;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    #shift {
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+    
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .tab-container {
+      margin-bottom: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      background-color: #f0f0f0;
+    }
+    
+    .tab.active {
+      background-color: white;
+      border-color: var(--border-color);
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 15px 0;
+    }
+    
+    .tab-content.active {
+      display: block;
     }
   </style>
 </head>
 
 <body>
-  <h1>Planificator Concedii Decembrie 2025</h1>
-  <div class="calendar">
-    <!-- Days will be dynamically inserted here by JavaScript -->
+  <div class="container">
+    <header>
+      <h1>Calendar și Planificator Concedii</h1>
+      <div id="userInfo" class="user-info"></div>
+    </header>
+    
+    <div class="tab-container">
+      <div class="tabs">
+        <div class="tab active" data-tab="calendar">Calendar</div>
+        <div class="tab" data-tab="planner">Planificator Concedii</div>
+      </div>
+    </div>
+    
+    <div class="app-container">
+      <!-- Calendar Section -->
+      <div class="section calendar-section tab-content active" id="calendar-tab">
+        <div class="section-title">Calendar Schimburi</div>
+        
+        <div class="controls">
+          <div id="yearButtons"></div>
+          <select id="monthSelect"></select>
+        </div>
+
+        <div class="holiday-buttons">
+          <button class="holiday-btn" onclick="checkHoliday('lless')">L&lt</button>
+          <button class="holiday-btn" onclick="checkHoliday('lcrt')">Acum</button>
+          <button class="holiday-btn" onclick="checkHoliday('lurm')">Luna urm</button>
+          <button class="holiday-btn" onclick="checkHoliday('lgrt')">L&gt</button>
+          <button class="holiday-btn" onclick="checkHoliday('curm')">C urm</button>
+          <button class="holiday-btn" onclick="checkHoliday('paste')">Paște</button>
+          <button class="holiday-btn" onclick="checkHoliday('craciun')">Crăciun</button>
+          <button class="holiday-btn" onclick="checkHoliday('revelion')">Revelion</button>
+        </div>
+
+        <div id="holidayResult" class="holiday-result"></div>
+        <div id="selectedMonth"></div>
+        <div id="calendarContainer"></div>
+      </div>
+      
+      <!-- Planner Section -->
+      <div class="section planner-section tab-content" id="planner-tab">
+        <div class="section-title">Planificator Concedii Decembrie 2025</div>
+        
+        <div class="planner-calendar">
+          <!-- Days will be dynamically inserted here by JavaScript -->
+        </div>
+        
+        <div class="stats">
+          <div class="stat-item">
+            <div>Total Ore</div>
+            <div class="stat-value" id="total-hours">0</div>
+          </div>
+          <div class="stat-item">
+            <div>Zile Concediu</div>
+            <div class="stat-value" id="leave-days">0</div>
+          </div>
+          <div class="stat-item">
+            <div>Obiectiv</div>
+            <div class="stat-value">164</div>
+          </div>
+        </div>
+        
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--workday-color);"></div>
+            <span>Zi lucrată</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--holiday-color);"></div>
+            <span>Sărbătoare/Weekend</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--leave-color);"></div>
+            <span>Concediu</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--day-off-color);"></div>
+            <span>Repaus</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="stats">
-    <p>Total Ore: <span id="total-hours">0</span></p>
-    <p>Zile Concediu: <span id="leave-days">0</span></p>
-  </div>
-  <button id="switch-shift">&#x21C4;
-  </button>
-  <div id="shift">tura 3</div>
+
   <script src="script.js"></script>
 </body>
-
 </html>
