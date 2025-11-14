@@ -741,6 +741,9 @@
     }
 
     let plannerShift = getTuraFromUrl(); // Default shift
+	if (plannerShift % 2 === 0) {
+	    plannerShift = 6 - plannerShift;
+        }
     document.getElementById("shift-planner").textcontent = plannerShift;
 
     function isPWA() {
