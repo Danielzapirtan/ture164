@@ -741,9 +741,6 @@
     }
 
     let plannerShift = getTuraFromUrl(); // Default shift
-/*	if (plannerShift % 2 === 0) {
-	    plannerShift = 6 - plannerShift;
-        }*/
     document.getElementById("shift-planner").textcontent = plannerShift;
 
     function isPWA() {
@@ -1094,7 +1091,7 @@
             
             // Determine initial day type
             const isHoliday = decemberHolidays.includes(day) || saturdays.includes(day) || sundays.includes(day);
-            const isWorkDay = ((day + 7 - tura) % 4 < 2);
+            const isWorkDay = ((day + 7 - plannerShift) % 4 < 2);
             
             if (isHoliday) {
                 dayElement.classList.add("holiday");
@@ -1114,7 +1111,7 @@
 
     function toggleDayStatus(dayElement, day) {
       const isHoliday = decemberHolidays.includes(day) || saturdays.includes(day) || sundays.includes(day);
-      const isWorkDay = ((day + 7 - tura) % 4 < 2);
+      const isWorkDay = ((day + 7 - plannerShift) % 4 < 2);
       if (isWorkDay) {
         if (dayElement.classList.contains("holiday")) {
           if (dayElement.classList.contains("workday")) {
@@ -1178,9 +1175,9 @@
         // Update display
         monthYearDisplay.textContent = `${monthNamesRo[plannerMonth]} ${plannerYear}`;
 	plannerShift = getTuraFromUrl();
-	/*if (plannerShift % 2 === 0) {
+	if (plannerShift % 2 === 0) {
 	    plannerShift = 6 - plannerShift;
-        }*/
+        }
         shiftDisplay.textContent = plannerShift;
         
         // Get holidays for the current month
@@ -1221,8 +1218,8 @@
             const currentDate = new Date(plannerYear, plannerMonth, day);
             const daysDiff = Math.ceil((currentDate - date0) / 86400000);
         let shift2 = plannerShift;
-       /* if (shift2 % 2 === 0)
-            shift2 = 6 - shift2;*/
+        if (shift2 % 2 === 0)
+            shift2 = 6 - shift2;
             const shift = (daysDiff + shift2) % 4;
             
             // Add shift info
