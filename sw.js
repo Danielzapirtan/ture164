@@ -1,8 +1,9 @@
-const CACHE_NAME = "calendar-cache-v20251113-2210";
+const CACHE_NAME = "calendar-cache-v20251115-0528";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./script.js",
+  "./style.css",
   "./manifest.json"
 ];
 
