@@ -1165,12 +1165,6 @@
 
         // Update display
         monthYearDisplay.textContent = `${monthNamesRo[plannerMonth]} ${plannerYear}`;
-        plannerShift = getTuraFromUrl();
-        if (plannerShift % 2 === 0) {
-          plannerShift = 6 - plannerShift;
-        }
-        shiftDisplay.textContent = plannerShift;
-
         // Get holidays for the current month
         const holidays = await getHolidaysForMonth(plannerYear, plannerMonth);
 
@@ -1208,10 +1202,7 @@
           const date0 = new Date(2017, 0, 1);
           const currentDate = new Date(plannerYear, plannerMonth, day);
           const daysDiff = Math.ceil((currentDate - date0) / 86400000);
-          let shift2 = plannerShift;
-          if (shift2 % 2 === 0)
-            shift2 = 6 - shift2;
-          const shift = (daysDiff + shift2) % 4;
+          const shift = (daysDiff + plannerShift) % 4;
 
           // Add shift info
           const shiftInfo = document.createElement("div");
