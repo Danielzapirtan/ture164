@@ -32,8 +32,7 @@
       <div class="tab-container">
         <div class="tabs">
           <div class="tab active" data-tab="calendar">Calendar</div>
-          <div class="tab" data-tab="planner">Planificator Concedii</div>
-          <div class="tab" data-tab="planner2026">Planificator Concedii 2026</div>
+          <div class="tab" data-tab="planner2026">Planificator Concedii</div>
         </div>
       </div>
 
@@ -63,64 +62,31 @@
           <div id="calendarContainer"></div>
         </div>
 
-        <!-- Planner Section -->
-        <div class="section planner-section tab-content" id="planner-tab">
-          <div class="section-title">Planificator Concedii Decembrie 2025</div>
-
-          <div class="planner-calendar">
-            <!-- Days will be dynamically inserted here by JavaScript -->
-          </div>
-
-          <div class="stats">
-            <div class="stat-item">
-              <div>Total Ore</div>
-              <div class="stat-value" id="total-hours">0</div>
-            </div>
-            <div class="stat-item">
-              <div>Zile Concediu</div>
-              <div class="stat-value" id="leave-days">0</div>
-            </div>
-            <div class="stat-item">
-              <div>Obiectiv</div>
-              <div class="stat-value">164</div>
-            </div>
-          </div>
-
-          <div class="legend">
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: var(--workday-color);"></div>
-              <span>Zi lucrată</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: var(--holiday-color);"></div>
-              <span>Sărbătoare/Weekend</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: var(--leave-color);"></div>
-              <span>Concediu</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background-color: var(--day-off-color);"></div>
-              <span>Repaus</span>
-            </div>
-          </div>
-        </div>
-
         <!-- Planner 2026 Section -->
         <div class="section tab-content" id="planner2026-tab">
-          <div class="section-title">Planificator Concedii 2026</div>
+          <div class="section-title">Planificator Concedii</div>
 
           <div class="combined-planner">
             <div class="combined-controls">
               <div class="month-navigation">
                 <button class="nav-btn" id="prev-month">&lt;</button>
-                <span id="current-month-year">Ianuarie 2026</span>
+                <span id="current-month">Ianuarie</span>
                 <button class="nav-btn" id="next-month">&gt;</button>
+              </div>
+              <div class="year-navigation">
+                <button class="nav-btn" id="prev-year">&lt;</button>
+                <span id="current-year">2026</span>
+                <button class="nav-btn" id="next-year">&gt;</button>
               </div>
               <div class="shift-controls">
                 <span>Tură: </span>
                 <span id="shift-planner">3</span>
               </div>
+            </div>
+
+            <div class="optimization-controls">
+              <button class="optimize-btn" id="optimize-leave">Optimizează Concediu</button>
+              <div id="optimization-result" class="optimization-result"></div>
             </div>
 
             <div class="combined-stats">
@@ -135,6 +101,10 @@
               <div class="stat-item">
                 <div>Ore Total</div>
                 <div class="stat-value" id="total-hours-2026">0</div>
+              </div>
+              <div class="stat-item">
+                <div>Ore Țintă</div>
+                <div class="stat-value" id="target-hours-2026">0</div>
               </div>
             </div>
 

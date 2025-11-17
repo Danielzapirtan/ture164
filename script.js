@@ -62,9 +62,12 @@ let currentYear = new Date().getFullYear();
 let selectedYear = currentYear;
 let selectedMonth = new Date().getMonth();
 let leaveDays = [];
+const refYear = 2017;
+const minYear = refYear + 1;
+const maxYear = 2037;
 
 // Planner 2026 variables
-let plannerYear = 2026;
+let plannerYear = currentYear;
 let plannerMonth = 0; // January
 let plannerLeaveDays = [];
 let plannerWorkedDays = 0;
@@ -145,7 +148,7 @@ function getTuraFromUrl() {
 }
 
 let plannerShift = getTuraFromUrl(); // Default shift
-document.getElementById("shift-planner").textcontent = plannerShift;
+document.getElementById("shift-planner").textContent = plannerShift;
 
 function isPWA() {
   return window.navigator.standalone === true || 
@@ -237,6 +240,21 @@ function initializeControls() {
   populateMonthSelect();
 
   // Initialize planner 2026 controls
+  document.getElementById('prev-year').addEventListener('click', () => {
+    plannerYear = plannerYear - 1;
+    if (plannerYear < minYear)
+      plannerYear = minYear;
+    updatePlanner2026();
+  });
+
+  document.getElementById('next-year').addEventListener('click', () => {
+    plannerYear = plannerYear + 1;
+    if (plannerYear > maxYear)
+      plannerYear = maxYear;
+    updatePlanner2026();
+  });
+
+  // Initialize planner 2026 controls
   document.getElementById('prev-month').addEventListener('click', () => {
     plannerMonth = (plannerMonth - 1 + 12) % 12;
     updatePlanner2026();
@@ -246,6 +264,9 @@ function initializeControls() {
     plannerMonth = (plannerMonth + 1) % 12;
     updatePlanner2026();
   });
+
+  // Initialize optimize button
+  document.getElementById('optimize-leave').addEventListener('click', optimizeLeaveDays);
 
   if (!isPWA()) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -279,7 +300,7 @@ function updateCalendar() {
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
   const firstDay = (new Date(selectedYear, selectedMonth, 1).getDay() + 6) % 7;
   let tura = getTuraFromUrl();
-  const date0 = new Date(2017, 0, 1);
+  const date0 = new Date(refYear, 0, 1);
   let fakeDayOfYear = Math.ceil((new Date(selectedYear, selectedMonth, 1) - date0) / 86400000);
 
   let html = `<table><tr><th>lun</th><th>mar</th><th>mie</th><th>joi</th><th>vin</th><th>sâm</th><th>dum</th></tr><tr>`;
@@ -296,7 +317,7 @@ function updateCalendar() {
       fakeDayOfYear++; 
       dayCount++;
     } else {
-      html += `<td></td>`;
+      html += `<td class="unclickable"></td>`;
     }
 
     if (i % 7 === 6 && dayCount <= daysInMonth) html += `</tr><tr>`;
@@ -434,7 +455,6 @@ const saturdays = [6, 13, 20, 27];
 const sundays = [7, 14, 21, 28];
 const hoursPerWorkedDay = 12;
 const hoursPerLeaveDay = 8;
-const goalHours = 164;
 let totalHours = 0;
 const tura = getTuraFromUrl();
 let leaveDaysPlanner = 0;
@@ -490,7 +510,7 @@ async function renderPlanner() {
 
   for (let day = 1; day <= daysInDecember; day++) {
     const dayElement = document.createElement("div");
-    dayElement.classList.add("day");
+    dayElement.classList.add("combined-day");
     dayElement.textContent = day;
 
     // Determine initial day type
@@ -566,14 +586,16 @@ function toggleDayStatus(dayElement, day) {
 // Planner 2026 functionality
 async function updatePlanner2026() {
   const calendar = document.getElementById("planner-2026-calendar");
-  const monthYearDisplay = document.getElementById("current-month-year");
+  const monthDisplay = document.getElementById("current-month");
+  const yearDisplay = document.getElementById("current-year");
   const shiftDisplay = document.getElementById("shift-planner");
   const workedDaysDisplay = document.getElementById("worked-days");
   const leaveDaysDisplay = document.getElementById("leave-days-2026");
   const totalHoursDisplay = document.getElementById("total-hours-2026");
 
   // Update display
-  monthYearDisplay.textContent = `${monthNamesRo[plannerMonth]} ${plannerYear}`;
+  monthDisplay.textContent = `${monthNamesRo[plannerMonth]}`;
+  yearDisplay.textContent = `${plannerYear}`;
   plannerShift = getTuraFromUrl();
   if (plannerShift % 2 === 0) {
     plannerShift = 6 - plannerShift;
@@ -587,6 +609,12 @@ async function updatePlanner2026() {
   const daysInMonth = new Date(plannerYear, plannerMonth + 1, 0).getDate();
   const firstDay = (new Date(plannerYear, plannerMonth, 1).getDay() + 6) % 7;
 
+  let targetHours = 0;
+  for (let day = 1; day <= daysInMonth; day++) {
+    if (!holidays.includes(day) && (new Date(plannerYear, plannerMonth, day).getDay() % 6) != 0)
+      targetHours += 8;
+  }
+  document.getElementById("target-hours-2026").textContent = targetHours;
   // Reset stats
   plannerWorkedDays = 0;
   plannerTotalHours = 0;
@@ -599,6 +627,7 @@ async function updatePlanner2026() {
   for (let i = 0; i < firstDay; i++) {
     const emptyDay = document.createElement("div");
     emptyDay.classList.add("combined-day");
+    emptyDay.classList.add("unclickable");
     calendar.appendChild(emptyDay);
   }
 
@@ -614,7 +643,7 @@ async function updatePlanner2026() {
     dayElement.appendChild(dayNumber);
 
     // Calculate shift
-    const date0 = new Date(2017, 0, 1);
+    const date0 = new Date(refYear, 0, 1);
     const currentDate = new Date(plannerYear, plannerMonth, day);
     const daysDiff = Math.ceil((currentDate - date0) / 86400000);
     let shift2 = plannerShift;
@@ -757,6 +786,127 @@ function togglePlannerDay(year, month, day) {
   }
 
   updatePlanner2026();
+}
+
+// Schedule optimization algorithm from schedule-2026.js
+async function optimizeLeaveDays() {
+  const resultElement = document.getElementById('optimization-result');
+  resultElement.textContent = 'Se calculează...';
+  resultElement.className = 'optimization-result calculating';
+
+  try {
+    const year = plannerYear;
+    const month = plannerMonth;
+    
+    // Get holidays for the current month
+    const holidays = await getHolidaysForMonth(year, month);
+    
+    // Add weekends to holidays
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      if (date.getDay() === 0 || date.getDay() === 6) { // Sunday or Saturday
+        if (!holidays.includes(day)) {
+          holidays.push(day);
+        }
+      }
+    }
+    
+    holidays.sort((a, b) => a - b);
+    
+    // Calculate target hours
+    let targetHours = 0;
+    for (let day = 1; day <= daysInMonth; day++) {
+      if (!holidays.includes(day) && (new Date(year, month, day).getDay() % 6) !== 0) {
+        targetHours += 8;
+      }
+    }
+    
+    const refDate = new Date(refYear, 0, 0);
+    let best = [-Infinity, -Infinity];
+    let bestChoice = [-1, -1];
+    
+    // Try all possible leave periods
+    for (let startDay = 1; startDay <= daysInMonth - 1; startDay++) {
+      for (let endDay = startDay + 1; endDay <= daysInMonth; endDay++) {
+        let score = [0, 0];
+        const leaves = [];
+
+        // Create leave period
+        for (let day = startDay; day <= endDay; day++) {
+          leaves.push(day);
+        }
+
+        score[1] = leaves.length;
+        let countHours = 0;
+
+        // Calculate hours for this configuration
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date1 = new Date(year, month, day);
+            const ecart = Math.round((date1 - refDate) / 86400000) + 7 - plannerShift;
+          // Check if it's a work day and not on leave
+          if (((ecart % 4) < 2) && !leaves.includes(day)) {
+            countHours += 12;
+          } else if (!holidays.includes(day) && leaves.includes(day)) {
+            // Leave day on regular day
+            countHours += 8;
+          }
+          // Holidays and weekends don't contribute to hours
+        }
+
+        // Only consider configurations that match target hours
+        if (countHours === targetHours) {
+          // Calculate score: count work days that fall on holidays
+          for (let day = 1; day <= daysInMonth; day++) {
+            const date1 = new Date(year, month, day);
+            //const ecart = Math.round((date1 - refDate) / 86400000);
+            const ecart = Math.round((date1 - refDate) / 86400000) + 7 - plannerShift;
+            
+            // If it's a holiday, a work day, and not on leave
+            if (holidays.includes(day) && ((ecart % 4) < 2) && !leaves.includes(day)) {
+              score[0] += 1;
+            }
+          }
+        }
+
+        // Update best choice
+        if (score[0] > best[0] || (score[0] === best[0] && score[1] > best[1])) {
+          best[0] = score[0];
+          best[1] = score[1];
+          bestChoice[0] = startDay;
+          bestChoice[1] = endDay;
+        }
+      }
+    }
+
+    // Apply the best leave period
+    if (bestChoice[0] !== -1 && bestChoice[1] !== -1) {
+      // Clear existing leave days for this month
+      plannerLeaveDays = plannerLeaveDays.filter(day => {
+        const [y, m, d] = day.split('-').map(Number);
+        return !(y === year && m === month);
+      });
+
+      // Add new leave days
+      for (let day = bestChoice[0]; day <= bestChoice[1]; day++) {
+        const dateKey = `${year}-${month}-${day}`;
+        plannerLeaveDays.push(dateKey);
+      }
+
+      // Update the planner
+      updatePlanner2026();
+
+      resultElement.textContent = `Concediu optimizat: zilele ${bestChoice[0]}-${bestChoice[1]} ${monthNamesRo[month]}`;
+      resultElement.className = 'optimization-result success';
+    } else {
+      resultElement.textContent = 'Nu s-a găsit o soluție optimă';
+      resultElement.className = 'optimization-result error';
+    }
+  } catch (error) {
+    console.error('Error optimizing leave days:', error);
+    resultElement.textContent = 'Eroare la optimizare';
+    resultElement.className = 'optimization-result error';
+  }
 }
 
 // Initialize both apps
